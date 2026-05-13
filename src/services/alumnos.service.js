@@ -1,15 +1,22 @@
 const supabase = require('../config/supabase');
 const bcrypt = require('bcryptjs');
 
-const getAll = async (page, size) => {
+const getAll = async (page, size, id_rol) => {
     const from = page * size;
     const to = from + size - 1;
 
-    const { data, error, count } = await supabase
+    let query = supabase
         .from('usuarios')
         .select('id_usuario, username, email, nombre, id_rol, activo, fecha_creacion', { count: 'exact' })
         .eq('activo', true)
         .range(from, to);
+
+    // MAESTRO no puede ver al ADMIN
+    if (id_rol === 3) {
+        query = query.neq('id_rol', 1);
+    }
+
+    const { data, error, count } = await query;
 
     if (error) {
         const err = new Error('Error al obtener alumnos');

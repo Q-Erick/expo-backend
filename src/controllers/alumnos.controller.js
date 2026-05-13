@@ -4,8 +4,9 @@ const getAll = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const id_rol = req.user.id_rol; 
 
-        const result = await alumnosService.getAll(page, size);
+        const result = await alumnosService.getAll(page, size, id_rol);
         res.status(200).json(result);
     } catch (err) {
         next(err);
