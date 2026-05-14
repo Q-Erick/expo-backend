@@ -8,15 +8,16 @@ const getAll = async (page, size) => {
     const { data, error, count } = await supabase
         .from('equipos')
         .select(
-            `id_equipo, nombre_equipo, id_grupo, id_jefe, activo, fecha_creacion,
-             grupos(nombre_grupo),
-             usuarios!equipos_id_jefe_fkey(id_usuario, username, nombre)`,
+            `id_equipo, nombre_equipo, id_grupo, id_jefe, activo, fecha_creacion`,
             { count: 'exact' }
         )
-        .range(from, to);
+        .eq('activo', true)
+        .range(from, to)
+        .order('id_equipo', { ascending: true });
 
     if (error) {
-        const err = new Error('Error al obtener equipos');
+        console.error('Supabase Error:', error);
+        const err = new Error('Error al obtener equipos: ' + error.message);
         err.status = 500;
         err.error  = 'Internal Server Error';
         throw err;
@@ -36,18 +37,13 @@ const getById = async (id) => {
     const { data, error } = await supabase
         .from('equipos')
         .select(
-            `id_equipo, nombre_equipo, id_grupo, id_jefe, activo, fecha_creacion,
-             grupos(nombre_grupo),
-             usuarios!equipos_id_jefe_fkey(id_usuario, username, nombre),
-             equipo_alumno(
-               fecha_union,
-               usuarios!equipo_alumno_id_alumno_fkey(id_usuario, username, nombre)
-             )`
+            `id_equipo, nombre_equipo, id_grupo, id_jefe, activo, fecha_creacion`
         )
         .eq('id_equipo', id)
         .single();
 
     if (error || !data) {
+        console.error('Supabase Error:', error);
         const err = new Error('Equipo no encontrado');
         err.status = 404;
         err.error  = 'Not Found';
