@@ -20,6 +20,9 @@ router.put('/:id', authMiddleware, checkRole(1, 3), rubricasController.update);
 // DELETE /api/v1/rubricas/:id - solo ADMIN
 router.delete('/:id', authMiddleware, checkRole(1), rubricasController.remove);
 
+// PUT /api/v1/rubricas/:id/publicar - ADMIN y MAESTRO
+router.put('/:id/publicar', authMiddleware, checkRole(1, 3), rubricasController.publish);
+
 // GET /api/v1/rubricas/:id/criterios - todos los roles
 router.get('/:id/criterios', authMiddleware, checkRole(1, 2, 3), rubricasController.getCriterios);
 
@@ -29,7 +32,7 @@ router.post('/:id/criterios', authMiddleware, checkRole(1, 3), rubricasControlle
 // PUT /api/v1/rubricas/:id/criterios/:id_criterio - ADMIN y MAESTRO
 router.put('/:id/criterios/:id_criterio', authMiddleware, checkRole(1, 3), rubricasController.updateCriterio);
 
-// DELETE /api/v1/rubricas/:id/criterios/:id_criterio - solo ADMIN
-router.delete('/:id/criterios/:id_criterio', authMiddleware, checkRole(1), rubricasController.removeCriterio);
+// DELETE /api/v1/rubricas/:id/criterios/:id_criterio - ADMIN y MAESTRO
+router.delete('/:id/criterios/:id_criterio', authMiddleware, checkRole(1, 3), rubricasController.removeCriterio);
 
 module.exports = router;
